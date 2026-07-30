@@ -1,0 +1,59 @@
+name: Bug report
+description: It doesn't work as documented
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Two things account for most reports, both covered in the README:
+
+        - **Blank or white screen** → the ST7789 pin mapping is wrong for your
+          board. The defines at the top of `src/main.cpp` are for an ideaspark
+          board; the widely-copied LilyGO T-Display pinout is different.
+        - **Won't connect, and the panel says something about a wrong password** →
+          read the **raw 802.11 reason** on the line below the hint. Arduino's
+          status collapses several unrelated failures into "wrong password", so
+          the hint is often misleading. The README has a table.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens, and what did you expect?
+    validations:
+      required: true
+
+  - type: input
+    id: reason
+    attributes:
+      label: The "Last attempt" lines from the setup screen
+      description: Both the hint and the raw reason underneath it, if you're seeing a connection failure.
+      placeholder: "Wrong password? / 4WAY_TIMEOUT"
+    validations:
+      required: false
+
+  - type: input
+    id: board
+    attributes:
+      label: Board
+      placeholder: ideaspark ESP32 with built-in 1.14" ST7789, or whatever you have
+    validations:
+      required: true
+
+  - type: input
+    id: security
+    attributes:
+      label: Your network's security mode
+      description: WPA2, WPA2/WPA3 mixed, WPA3-only — and 2.4 GHz or 5 GHz. The ESP32 is 2.4 GHz only.
+      placeholder: WPA2-PSK, 2.4 GHz
+    validations:
+      required: false
+
+  - type: textarea
+    id: build
+    attributes:
+      label: Build output, if it fails to compile
+      description: The error plus a few lines of context is plenty.
+      render: shell
+    validations:
+      required: false
