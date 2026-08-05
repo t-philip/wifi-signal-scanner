@@ -45,6 +45,14 @@
 #define RSSI_MIN -100
 #define RSSI_MAX -30
 
+// Sentinel for "no reading" (WiFi disconnected) -- distinct from any real RSSI
+// value. RSSI_MIN used to double as this sentinel, which meant a genuinely
+// connected but very weak signal (<=-95dBm, labelled LOST but still a real
+// reading) drew as a *gap* in the history graph, indistinguishable from having
+// lost the connection entirely. RSSI_NONE only ever comes from "not connected";
+// a real reading is always plotted, clamped to the axis if it falls outside it.
+#define RSSI_NONE -999
+
 // Portal AP. The password derives from the chip's eFuse MAC so it is stable per
 // device and printed on the panel -- not one default shared by every build.
 static const char* AP_SSID = "WiFiScanner-Setup";
@@ -317,7 +325,7 @@ void setup() {
     tft.setRotation(2);
     tft.fillScreen(ST77XX_BLACK);
 
-    for (int i = 0; i < SCREEN_W; i++) history[i] = RSSI_MIN;
+    for (int i = 0; i < SCREEN_W; i++) history[i] = RSSI_NONE;
 
     drawCentered("Starting", SCREEN_H / 2 - 10, 2, ST77XX_WHITE);
 
@@ -386,7 +394,7 @@ void loop() {
         WiFi.reconnect();
     }
 
-    int currentRSSI = (WiFi.status() == WL_CONNECTED) ? WiFi.RSSI() : RSSI_MIN;
+    int currentRSSI = (WiFi.status() == WL_CONNECTED) ? WiFi.RSSI() : RSSI_NONE;
 
     String displaySSID = WiFi.SSID();
     if (displaySSID.length() == 0) displaySSID = "Reconnecting";
@@ -404,7 +412,9 @@ void loop() {
         tft.fillRect(0, 50, SCREEN_W, 90, ST77XX_BLACK);
         drawCentered(statusLabel, 60, 2, statusColor);
         drawCentered(displaySSID, 85, 1, 0x7BEF);
-        drawCentered(String(currentRSSI) + " dBm", 110, 2, ST77XX_WHITE);
+        String rssiText = (currentRSSI == RSSI_NONE) ? String("-- dBm")
+                                                       : (String(currentRSSI) + " dBm");
+        drawCentered(rssiText, 110, 2, ST77XX_WHITE);
         lastLabel = statusLabel;
         lastRSSI = currentRSSI;
         lastSSID = displaySSID;
@@ -422,9 +432,15 @@ void loop() {
     tft.drawFastHLine(0, gBot, SCREEN_W, 0x3186);
 
     for (int i = 1; i < SCREEN_W; i++) {
-        if (history[i] <= RSSI_MIN && history[i - 1] <= RSSI_MIN) continue;
-        int y1 = map(history[i - 1], RSSI_MIN, RSSI_MAX, gBot, gTop);
-        int y2 = map(history[i],     RSSI_MIN, RSSI_MAX, gBot, gTop);
+        // Skip only where neither point has a real reading. A boundary segment
+        // (one real point, one RSSI_NONE) still draws -- constrain() clamps the
+        // NONE side to the bottom of the axis, which is the correct visual for
+        // "signal was here, then the connection was lost."
+        if (history[i] == RSSI_NONE && history[i - 1] == RSSI_NONE) continue;
+        int v1 = constrain(history[i - 1], RSSI_MIN, RSSI_MAX);
+        int v2 = constrain(history[i],     RSSI_MIN, RSSI_MAX);
+        int y1 = map(v1, RSSI_MIN, RSSI_MAX, gBot, gTop);
+        int y2 = map(v2, RSSI_MIN, RSSI_MAX, gBot, gTop);
         String dummyL; uint16_t lineCol;
         getSignalLevel(history[i], dummyL, lineCol);
         tft.drawLine(i - 1, y1, i, y2, lineCol);

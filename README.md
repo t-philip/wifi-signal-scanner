@@ -113,6 +113,14 @@ That sent the investigation after the password, the router's access-control list
 and the platform version in turn, before the actual cause turned out to be a
 single line of setup ordering.
 
+## Design
+
+[docs/DESIGN_SPEC.md](docs/DESIGN_SPEC.md) explains how this is built and why — the
+Setup/Monitor state machine, why the portal is non-blocking, the raw-802.11-reason
+diagnostic, the AP-password threat model, and an honest verification status: this
+firmware has no test harness and no CI, so "verified" always means "flashed and
+observed," never "test suite passed."
+
 ---
 
 Licensed under [GPL-3.0](LICENSE). Please credit **t-philip** if you use or share this.
