@@ -123,6 +123,8 @@ observed," never "test suite passed."
 
 ---
 
-Licensed under [GPL-3.0](LICENSE). Please credit **t-philip** if you use or share this.
+Licensed under [AGPL-3.0](LICENSE). Please credit **t-philip** if you use or share this.
+If you modify it and make it available to others over a network, you must offer those
+users the source of your modified version.
 
 Built and maintained by [t-philip](https://github.com/t-philip).

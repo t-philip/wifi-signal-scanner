@@ -6,7 +6,7 @@
 **Status:** Reconciled against the shipped code. Describes what the firmware actually
 does, including one defect found while writing this document and fixed before this
 spec's first release, and one known limitation left open on purpose.
-**Licence:** GPL-3.0, same as the code.
+**Licence:** AGPL-3.0, same as the code. Relicensed from GPL-3.0 on 2026-08-06 — see §10.
 
 ---
 
@@ -359,7 +359,14 @@ that part of the behaviour is unchanged.
 
 ## 10. Licence and provenance
 
-Published under **GPL-3.0** alongside the code it describes.
+Published under **AGPL-3.0** alongside the code it describes.
+
+**Licence history.** This repository was published under GPL-3.0 until 2026-08-06, when
+it was relicensed to AGPL-3.0. The change adds §13 (Remote Network Interaction): anyone
+who modifies this code and makes it available to users over a network must offer those
+users the corresponding source. Copyright is held solely by T. Philip, so the change was
+made without third-party consent. Releases already published under GPL-3.0 remain
+available under GPL-3.0 to anyone who received them — that grant is not revocable.
 
 Written and built by **T. Philip** — <https://github.com/t-philip>.
 Repository: <https://github.com/t-philip/wifi-signal-scanner>.
