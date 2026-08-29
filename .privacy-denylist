@@ -1,0 +1,4 @@
+# Terms specific to this repo. One extended-regex per line.
+# A WiFi tool must never publish a real SSID, BSSID or PSK.
+SSID\s*=\s*"[^"]{2,}"
+([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}
