@@ -100,7 +100,7 @@ lowers the security floor.
 
 ## One finding worth knowing
 
-If you're building anything with WiFiManager, this one cost real debugging time:
+If you're building anything with WiFiManager, this is a common pitfall:
 
 **Do not call `WiFi.mode(WIFI_STA)` before `wm.autoConnect()`.** `autoConnect()`
 brings the radio up itself via `WiFi_enableSTA`. Setting the mode beforehand,
@@ -109,9 +109,7 @@ WiFiManager's back — something the library explicitly guards against internall
 
 The symptom is badly misleading: connections fail with
 `WL_STATION_WRONG_PASSWORD` on a network whose password is completely correct.
-That sent the investigation after the password, the router's access-control list,
-and the platform version in turn, before the actual cause turned out to be a
-single line of setup ordering.
+The actual cause is a single line of setup ordering.
 
 ## Design
 

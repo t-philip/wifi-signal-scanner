@@ -19,8 +19,7 @@ firmware project with no test harness and no compiler available on the machine t
 wrote this document.
 
 There is no pre-implementation brief for this project (unlike `sky-radar`'s
-`SKYRADAR_BRIEF.md`) — it grew directly from an earlier hardcoded-network sketch inside
-a private monorepo, iterated against real hardware, and was published only once working.
+`SKYRADAR_BRIEF.md`) — it began as an earlier prototype, was iterated against real hardware, and was published only once working.
 So this document has no brief to reconcile against; instead §7 reconciles every claim in
 the README against `src/main.cpp` directly.
 
@@ -129,9 +128,8 @@ section:
 enabled, writes WiFi state to NVS **behind WiFiManager's back** — something the library
 explicitly guards against internally. The failure mode is `WL_STATION_WRONG_PASSWORD`
 on a network whose password is completely correct, which sends debugging down the wrong
-path entirely (password, then AP access-control list, then platform version) before the
-real cause — one line of setup ordering — is found. This firmware matches the working
-`spotify-nowplaying` bring-up exactly (same core, same library, same network) rather
+path; the real cause is one line of setup ordering. This firmware matches the
+`spotify-nowplaying` bring-up (same core, same library) rather
 than re-deriving the ordering from scratch.
 
 ### 3.3 Raw 802.11 disconnect reason, alongside the Arduino status
@@ -171,15 +169,13 @@ WL_CONNECTED`, in addition to the ESP32 core's own automatic reconnection
 (`WiFi.setAutoReconnect(true)`, set once in `setup()`). The source comment explains the
 30-second interval is deliberately long: forcing `WiFi.reconnect()` on a short timer
 tears down whatever attempt the core's own backoff already has in flight, resetting
-that backoff and slowing recovery rather than helping — this is exactly the "over-eager
-reconnect" bug fixed earlier in this project's private history (`7a7ff62`).
+that backoff and slowing recovery rather than helping — an "over-eager reconnect" bug fixed earlier in this firmware's development.
 
-**Audited and left as-is.** I considered removing the manual backstop as redundant with
+**Audited and left as-is.** The manual backstop is retained deliberately although it looks redundant with
 `setAutoReconnect`, but there is no visibility from the sketch into whether the core's
 own reconnect logic is mid-attempt at any given moment, and the interval is already
-tuned long enough that collisions should be rare. Given `7a7ff62` shows reconnect
-logic in this exact file has regressed once before, and there is no hardware available
-from the machine that wrote this document to verify a change here, this was judged not
+tuned long enough that collisions should be rare. Given that reconnect
+logic in this exact file has regressed once before, and a change here could not be verified on hardware, this was judged not
 worth the risk for a change with no reported symptom behind it. Recorded as a
 considered-and-rejected fix, not an oversight.
 
@@ -220,8 +216,7 @@ secret itself on a screen anyone else in the room can read.
 
 `AP_SSID` is the fixed string `"WiFiScanner-Setup"`, identical across every board
 running this firmware. Two boards in range simultaneously (plausible for anyone who owns
-more than one, as this project's author does — see `wifi-chatroom` in the same private
-monorepo) are indistinguishable in a WiFi scan; only the *password* differs per device,
+more than one) are indistinguishable in a WiFi scan; only the *password* differs per device,
 so joining the wrong one just fails to authenticate rather than misconfiguring anything,
 but it is a real point of confusion during setup.
 
@@ -263,14 +258,13 @@ behaviour applied to the document itself.
 
 ### 6.1 Verified on real hardware (prior sessions, before this document)
 
-Per the private-history commit `bf20d59` ("verified working on hardware; edge-trigger the
-BOOT button") and the README's own claims: the non-blocking portal, the BOOT-button
+Per the README's own claims: the non-blocking portal, the BOOT-button
 forget flow, WPA2-floor diagnosis, and normal signal-monitoring operation were confirmed
 on an ideaspark ESP32 board. This predates and is unaffected by the fix in §7.
 
 ### 6.2 Verified by this document: code review, not hardware
 
-**No PlatformIO installation exists on the machine that wrote this document**, so the
+**No PlatformIO build was available when this document was written**, so the
 fix in §7 could not be compile-checked, let alone flashed. What was done instead:
 
 - The full file was re-read after every edit for syntax correctness (balanced braces,
@@ -291,7 +285,7 @@ but connected signal.
 ### 6.3 Not covered at all
 
 No test harness exists for this project — firmware on a single-purpose microcontroller
-has no meaningful way to unit-test against real radio behaviour from this machine. There
+has no meaningful way to unit-test against real radio behaviour in a test harness. There
 is no CI. Verification for a change to this codebase will always mean "flashed and
 observed," never "test suite passed."
 
@@ -317,9 +311,7 @@ No divergence found.
 
 ## 8. Gap found while writing this document — and fixed
 
-Writing this specification surfaced one defect, in `src/main.cpp`. It is fixed as of
-commit `692c5f9` in the private history this firmware is developed in, applied to this
-repository in the same release as this document.
+Writing this specification surfaced one defect, in `src/main.cpp`. It is fixed in the same release as this document.
 
 ### 8.1 The history graph showed a gap during a real, sustained weak signal
 
