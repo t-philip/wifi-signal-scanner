@@ -14,9 +14,8 @@ spec's first release, and one known limitation left open on purpose.
 
 [README.md](../README.md) explains how to *build, flash and use* the scanner. This
 explains *why* it works the way it does — the state machine, the two library pitfalls
-that cost real debugging time, and what "verified" actually means for a single-file
-firmware project with no test harness and no compiler available on the machine that
-wrote this document.
+that is a common pitfall, and what "verified" actually means for a single-file
+firmware project with no test harness and no compiler available when this was written.
 
 There is no pre-implementation brief for this project (unlike `sky-radar`'s
 `SKYRADAR_BRIEF.md`) — it began as an earlier prototype, was iterated against real hardware, and was published only once working.
