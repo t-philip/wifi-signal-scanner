@@ -1,0 +1,18 @@
+name: Question or idea
+description: Help adapting it to another board, or a suggestion
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Adapting this to a different ESP32 + ST7789 board is expected — the pin
+        defines are at the top of `src/main.cpp` and the display geometry is a
+        handful of constants below them.
+
+  - type: textarea
+    id: body
+    attributes:
+      label: What would you like to know?
+    validations:
+      required: true
